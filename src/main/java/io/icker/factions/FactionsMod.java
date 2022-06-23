@@ -68,6 +68,7 @@ public class FactionsMod implements ModInitializer {
             new DisbandCommand(),
             new HomeCommand(),
             new InfoCommand(),
+            new MemberCommand(),
             new InviteCommand(),
             new JoinCommand(),
             new KickCommand(),
