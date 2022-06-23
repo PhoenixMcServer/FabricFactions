@@ -1,5 +1,6 @@
 package io.icker.factions.command;
 
+import java.text.Normalizer;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -54,9 +55,6 @@ public class InfoCommand implements Command {
     public static int info(ServerPlayerEntity player, Faction faction) {
         List<User> users = faction.getUsers();
 
-        String userText = Formatting.WHITE.toString() + users.size() + Formatting.GRAY + 
-            (FactionsMod.CONFIG.MAX_FACTION_SIZE != -1 ? "/" + FactionsMod.CONFIG.MAX_FACTION_SIZE : (" Member" + (users.size() != 1 ? "s" : "")));
-
         String commanderText = Formatting.WHITE + 
             String.valueOf(users.stream().filter(u -> u.rank == User.Rank.COMMANDER).count()) + Formatting.GRAY + " Commanders";
         
@@ -78,47 +76,33 @@ public class InfoCommand implements Command {
             .map(fac -> fac.getColor() + fac.getName())
             .collect(Collectors.joining(Formatting.GRAY + ", "));
 
-        String enemiesOf = Formatting.GRAY + faction.getEnemiesOf().stream()
-            .map(rel -> Faction.get(rel.target))
-            .map(fac -> fac.getColor() + fac.getName())
-            .collect(Collectors.joining(Formatting.GRAY + ", "));
-
         int requiredPower = faction.getClaims().size() * FactionsMod.CONFIG.CLAIM_WEIGHT;
         int maxPower = users.size() * FactionsMod.CONFIG.MEMBER_POWER + FactionsMod.CONFIG.BASE_POWER;
 
-        new Message(Formatting.GRAY + faction.getDescription())
-            .prependFaction(faction)
+        // generate the ---
+        int totalChars = 32;
+        String dashes = "";
+        for (int i = 0; i < (totalChars - faction.getName().length()) / 2; i++) {
+            dashes += "-";
+        }
+
+        new Message(Formatting.BLACK + dashes + "[ " + faction.getColor() + faction.getName() + Formatting.BLACK + " ]" + dashes)
+                .send(player, false);
+        new Message(Formatting.GOLD + "Description: ")
+            .add(Formatting.WHITE + faction.getDescription())
             .send(player, false);
-        new Message(userText)
-            .filler("·")
-            .add(commanderText)
-            .filler("·")
-            .add(leaderText)
-            .hover(usersList)
+        new Message(Formatting.GOLD + "Members (" + Formatting.WHITE.toString() + users.size() + Formatting.GOLD.toString() + "): ")
+            .add(usersList)
             .send(player, false);
-        new Message("Power")
-            .filler("·")
+        new Message(Formatting.GOLD + "Power: ")
             .add(Formatting.GREEN.toString() + faction.getPower() + slash() + requiredPower + slash() + maxPower)
             .hover("Current / Required / Max")
             .send(player, false);
-        if (mutualAllies.length() > 0)
-            new Message("Mutual allies: ")
+        new Message(Formatting.GREEN + "Allies (" + Formatting.WHITE + mutualAllies.length() + Formatting.GREEN + "): ")
                 .add(mutualAllies)
                 .send(player, false);
-        if (enemiesWith.length() > 0)
-            new Message("Enemies with: ")
+        new Message(Formatting.RED + "Enemies (" + Formatting.WHITE + (enemiesWith.length() - 2) + Formatting.RED + "): ")
                 .add(enemiesWith)
-                .send(player, false);
-        if (enemiesOf.length() > 0)
-            new Message("Enemies of: ")
-                .add(enemiesOf)
-                .send(player, false);
-
-        User user = Command.getUser(player);
-        UUID userFaction = user.isInFaction() ? user.getFaction().getID() : null;
-        if (faction.getID().equals(userFaction))
-            new Message("Your Rank: ")
-                .add(Formatting.GRAY + user.getRankName())
                 .send(player, false);
 
         return 1;
