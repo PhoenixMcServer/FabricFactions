@@ -1,8 +1,6 @@
 package io.icker.factions.command;
 
-import java.text.Normalizer;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import com.mojang.authlib.GameProfile;
@@ -55,13 +53,13 @@ public class InfoCommand implements Command {
     public static int info(ServerPlayerEntity player, Faction faction) {
         List<User> users = faction.getUsers();
 
-        String commanderText = Formatting.WHITE + 
-            String.valueOf(users.stream().filter(u -> u.rank == User.Rank.COMMANDER).count()) + Formatting.GRAY + " Commanders";
-        
-        String leaderText = Formatting.WHITE + 
-            String.valueOf(users.stream().filter(u -> u.rank == User.Rank.LEADER).count()) + Formatting.GRAY + " Leaders";
-
         UserCache cache = player.getServer().getUserCache();
+        String owner = Formatting.WHITE +
+                users.stream()
+                    .filter(u -> u.rank == User.Rank.OWNER)
+                    .map(user -> cache.getByUuid(user.getID()).orElse(new GameProfile(Util.NIL_UUID, "{Uncached Player}")).getName())
+                    .collect(Collectors.joining(", "));
+
         String usersList = users.stream()
             .map(user -> cache.getByUuid(user.getID()).orElse(new GameProfile(Util.NIL_UUID, "{Uncached Player}")).getName())
             .collect(Collectors.joining(", "));
@@ -90,6 +88,9 @@ public class InfoCommand implements Command {
                 .send(player, false);
         new Message(Formatting.GOLD + "Description: ")
             .add(Formatting.WHITE + faction.getDescription())
+            .send(player, false);
+        new Message(Formatting.GOLD + "Owner: ")
+            .add(Formatting.WHITE + owner)
             .send(player, false);
         new Message(Formatting.GOLD + "Members (" + Formatting.WHITE.toString() + users.size() + Formatting.GOLD.toString() + "): ")
             .add(usersList)
