@@ -58,6 +58,11 @@ public class DeclareCommand implements Command {
         Relationship rev = targetFaction.getRelationship(sourceFaction.getID());
         sourceFaction.setRelationship(rel);
 
+        // If declaring enemy, automatically set for both sides
+        if (rel.status == Relationship.Status.ENEMY || rel.status == Relationship.Status.NEUTRAL) {
+            targetFaction.setRelationship(new Relationship(sourceFaction.getID(), status));
+        }
+
         Message msgStatus = rel.status == Relationship.Status.ALLY ? new Message("allies").format(Formatting.GREEN) 
         : rel.status == Relationship.Status.ENEMY ? new Message("enemies").format(Formatting.RED) 
         : new Message("neutral");
@@ -114,5 +119,4 @@ public class DeclareCommand implements Command {
             )
             .build();
     }
-    
 }
