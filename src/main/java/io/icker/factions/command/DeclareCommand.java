@@ -58,7 +58,7 @@ public class DeclareCommand implements Command {
         Relationship rev = targetFaction.getRelationship(sourceFaction.getID());
         sourceFaction.setRelationship(rel);
 
-        // If declaring enemy, automatically set for both sides
+        // If declaring enemy/neutral, automatically set for both sides
         if (rel.status == Relationship.Status.ENEMY || rel.status == Relationship.Status.NEUTRAL) {
             targetFaction.setRelationship(new Relationship(sourceFaction.getID(), status));
         }
@@ -71,6 +71,10 @@ public class DeclareCommand implements Command {
             new Message("You are now mutually ").add(msgStatus).add(" with " + targetFaction.getName()).send(sourceFaction);
             new Message("You are now mutually ").add(msgStatus).add(" with " + sourceFaction.getName()).send(targetFaction);
             return 1;
+        }
+
+        if (rel.status == Relationship.Status.ALLY) {
+            new Message(Formatting.RED + "DISCLAIMER: Allies have full access to ALL your claims!");
         }
 
         new Message("You have declared " + targetFaction.getName() + " as ").add(msgStatus).send(sourceFaction);
