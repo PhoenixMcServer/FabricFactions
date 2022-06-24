@@ -12,8 +12,14 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.ChunkPos;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
 
 public class WorldManager {
+    private static Map<UUID, String> _lastUserVisits = new HashMap<>();
+
     public static void register() {
         PlayerEvents.ON_MOVE.register(WorldManager::onMove);
         MiscEvents.ON_MOB_SPAWN_ATTEMPT.register(WorldManager::onMobSpawnAttempt);
@@ -31,6 +37,8 @@ public class WorldManager {
         ChunkPos chunkPos = world.getChunk(player.getBlockPos()).getPos();
 
         Claim claim = Claim.get(chunkPos.x, chunkPos.z, dimension);
+
+        // handle autoclaim system
         if (user.autoclaim && claim == null) {
             Faction faction = user.getFaction();
             int requiredPower = (faction.getClaims().size() + 1) * FactionsMod.CONFIG.CLAIM_WEIGHT;
@@ -46,16 +54,21 @@ public class WorldManager {
                     .send(faction);
             }
         }
+
+        // radar system
         if (FactionsMod.CONFIG.RADAR && user.radar) {
-            if (claim != null) {
-                new Message(claim.getFaction().getName())
-                    .format(claim.getFaction().getColor())
-                    .send(player, true);
-            } else {
-                new Message("Wilderness")
-                    .format(Formatting.GREEN)
-                    .send(player, true);
+            String factionName = claim == null ? "Wilderness" : claim.getFaction().getName();
+            String subtitle = claim == null ? "Thread carefully!" : claim.getFaction().getDescription();
+            Formatting color = claim == null ? Formatting.GREEN : claim.getFaction().getColor();
+
+            if (_lastUserVisits.containsKey(player.getUuid()) && _lastUserVisits.get(player.getUuid()) == factionName) {
+                return;
             }
+
+            _lastUserVisits.put(player.getUuid(), factionName);
+
+            world.getServer().getCommandManager().execute(world.getServer().getCommandSource(), "title " + player.getCommandSource().getName() + " subtitle \"" + subtitle + "\"");
+            world.getServer().getCommandManager().execute(world.getServer().getCommandSource(), "title " + player.getCommandSource().getName() + " title {\"text\":\"" + factionName + "\",\"color\":\"" + color.asString() + "\"}");
         }
     }
 }
