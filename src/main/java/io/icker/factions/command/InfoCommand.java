@@ -99,10 +99,10 @@ public class InfoCommand implements Command {
             .add(Formatting.GREEN.toString() + faction.getPower() + slash() + requiredPower + slash() + maxPower)
             .hover("Current / Required / Max")
             .send(player, false);
-        new Message(Formatting.GREEN + "Allies (" + Formatting.WHITE + mutualAllies.length() + Formatting.GREEN + "): ")
+        new Message(Formatting.GREEN + "Allies (" + Formatting.WHITE + faction.getMutualAllies().size() + Formatting.GREEN + "): ")
                 .add(mutualAllies)
                 .send(player, false);
-        new Message(Formatting.RED + "Enemies (" + Formatting.WHITE + (enemiesWith.length() - 2) + Formatting.RED + "): ")
+        new Message(Formatting.RED + "Enemies (" + Formatting.WHITE + faction.getEnemiesWith().size() + Formatting.RED + "): ")
                 .add(enemiesWith)
                 .send(player, false);
 
