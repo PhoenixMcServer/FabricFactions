@@ -58,7 +58,7 @@ public class WorldManager {
         // radar system
         if (FactionsMod.CONFIG.RADAR && user.radar) {
             String factionName = claim == null ? "Wilderness" : claim.getFaction().getName();
-            String subtitle = claim == null ? "Thread carefully!" : claim.getFaction().getDescription();
+            String subtitle = claim == null ? FactionsMod.CONFIG.WildernessDescription : claim.getFaction().getDescription();
             Formatting color = claim == null ? Formatting.GREEN : claim.getFaction().getColor();
 
             if (_lastUserVisits.containsKey(player.getUuid()) && _lastUserVisits.get(player.getUuid()) == factionName) {

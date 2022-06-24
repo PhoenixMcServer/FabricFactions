@@ -102,6 +102,9 @@ public class Config {
     @SerializedName("home")
     public HomeOptions HOME = HomeOptions.CLAIMS;
 
+    @SerializedName("wildernessDescription")
+    public String WildernessDescription = "Tread carefully!";
+
     @SerializedName("radarEnabled")
     public boolean RADAR = true;
 
