@@ -19,6 +19,11 @@ import net.minecraft.util.Formatting;
 
 public class DeclareCommand implements Command {
     private int ally(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
+        new Message(Formatting.RED + "DISCLAIMER: Allies have full access to ALL your claims!").send(context.getSource().getPlayer(), false);
+        return 1;
+    }
+
+    private int confirmAlly(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
         return updateRelationship(context, Relationship.Status.ALLY);
     }
 
@@ -63,18 +68,14 @@ public class DeclareCommand implements Command {
             targetFaction.setRelationship(new Relationship(sourceFaction.getID(), status));
         }
 
-        Message msgStatus = rel.status == Relationship.Status.ALLY ? new Message("allies").format(Formatting.GREEN) 
-        : rel.status == Relationship.Status.ENEMY ? new Message("enemies").format(Formatting.RED) 
+        Message msgStatus = rel.status == Relationship.Status.ALLY ? new Message("Allies").format(Formatting.GREEN)
+        : rel.status == Relationship.Status.ENEMY ? new Message("Enemies").format(Formatting.RED)
         : new Message("neutral");
 
         if (rel.status == rev.status) {
             new Message("You are now mutually ").add(msgStatus).add(" with " + targetFaction.getName()).send(sourceFaction);
             new Message("You are now mutually ").add(msgStatus).add(" with " + sourceFaction.getName()).send(targetFaction);
             return 1;
-        }
-
-        if (rel.status == Relationship.Status.ALLY) {
-            new Message(Formatting.RED + "DISCLAIMER: Allies have full access to ALL your claims!");
         }
 
         new Message("You have declared " + targetFaction.getName() + " as ").add(msgStatus).send(sourceFaction);
@@ -99,8 +100,16 @@ public class DeclareCommand implements Command {
                 .requires(Requires.hasPerms("factions.declare.ally", 0))
                 .then(
                     CommandManager.argument("faction", StringArgumentType.greedyString())
+                        .suggests(Suggests.allFactions(false))
+                        .executes(this::ally)
+                ))
+            .then(
+                CommandManager.literal("confirmally")
+                .requires(Requires.hasPerms("factions.declare.ally", 0))
+                .then(
+                    CommandManager.argument("faction", StringArgumentType.greedyString())
                     .suggests(Suggests.allFactions(false))
-                    .executes(this::ally)
+                    .executes(this::confirmAlly)
                 )
             )
             .then(
