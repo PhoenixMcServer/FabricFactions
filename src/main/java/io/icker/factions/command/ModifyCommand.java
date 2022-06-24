@@ -23,6 +23,10 @@ public class ModifyCommand implements Command {
         ServerCommandSource source = context.getSource();
         ServerPlayerEntity player = source.getPlayer();
 
+        if (name.toLowerCase() == "safezone" || name.toLowerCase() == "wilderness" || name.toLowerCase() == "unclaimed" || name.toLowerCase() == "factionless") {
+            new Message("The name of this faction is not allowed as it is in conflict with mutual zones.").fail().send(player, false);
+        }
+
         if (Faction.getByName(name) != null) {
             new Message("A faction with that name already exists").fail().send(player, false);
             return 0;
