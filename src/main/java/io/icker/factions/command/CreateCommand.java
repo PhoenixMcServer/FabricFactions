@@ -22,7 +22,7 @@ public class CreateCommand implements Command {
         ServerCommandSource source = context.getSource();
         ServerPlayerEntity player = source.getPlayer();
 
-        if (name.toLowerCase() == "safezone" || name.toLowerCase() == "wilderness" || name.toLowerCase() == "unclaimed") {
+        if (name.toLowerCase() == "safezone" || name.toLowerCase() == "wilderness" || name.toLowerCase() == "unclaimed" || name.toLowerCase() == "factionless") {
             new Message("The name of this faction is not allowed as it is in conflict with mutual zones.").fail().send(player, false);
         }
 
