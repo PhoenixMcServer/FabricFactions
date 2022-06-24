@@ -25,6 +25,7 @@ public class ModifyCommand implements Command {
 
         if (name.toLowerCase() == "safezone" || name.toLowerCase() == "wilderness" || name.toLowerCase() == "unclaimed" || name.toLowerCase() == "factionless") {
             new Message("The name of this faction is not allowed as it is in conflict with mutual zones.").fail().send(player, false);
+            return 0;
         }
 
         if (Faction.getByName(name) != null) {
