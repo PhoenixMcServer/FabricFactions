@@ -67,8 +67,8 @@ public class WorldManager {
 
             _lastUserVisits.put(player.getUuid(), factionName);
 
-            world.getServer().getCommandManager().execute(world.getServer().getCommandSource(), "title " + player.getCommandSource().getName() + " subtitle \"" + subtitle + "\"");
-            world.getServer().getCommandManager().execute(world.getServer().getCommandSource(), "title " + player.getCommandSource().getName() + " title {\"text\":\"" + factionName + "\",\"color\":\"" + color.asString() + "\"}");
+            world.getServer().getCommandManager().execute(world.getServer().getCommandSource().withSilent(), "title " + player.getCommandSource().getName() + " subtitle \"" + subtitle + "\"");
+            world.getServer().getCommandManager().execute(world.getServer().getCommandSource().withSilent(), "title " + player.getCommandSource().getName() + " title {\"text\":\"" + factionName + "\",\"color\":\"" + color.asString() + "\"}");
         }
     }
 }
