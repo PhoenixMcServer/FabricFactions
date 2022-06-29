@@ -19,7 +19,7 @@ import net.minecraft.util.Formatting;
 
 public class DeclareCommand implements Command {
     private int ally(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
-        new Message("To confirm you want to make them your ally, run /f declare confirmally" + StringArgumentType.getString(context, "faction")).send(context.getSource().getPlayer(), false);
+        new Message("To confirm you want to make them your ally, run /f declare confirmally " + StringArgumentType.getString(context, "faction")).send(context.getSource().getPlayer(), false);
         new Message(Formatting.RED + "DISCLAIMER: Allies have full access to ALL your claims!").send(context.getSource().getPlayer(), false);
         return 1;
     }
