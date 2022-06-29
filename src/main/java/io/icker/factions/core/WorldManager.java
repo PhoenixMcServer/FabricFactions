@@ -35,7 +35,6 @@ public class WorldManager {
         String dimension = world.getRegistryKey().getValue().toString();
 
         ChunkPos chunkPos = world.getChunk(player.getBlockPos()).getPos();
-
         Claim claim = Claim.get(chunkPos.x, chunkPos.z, dimension);
 
         // handle autoclaim system

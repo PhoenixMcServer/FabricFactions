@@ -7,7 +7,11 @@ import io.icker.factions.api.persistents.Faction;
 import io.icker.factions.api.persistents.User;
 import io.icker.factions.mixin.BucketItemMixin;
 import io.icker.factions.mixin.ItemMixin;
+import io.icker.factions.util.Message;
 import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
+import net.fabricmc.fabric.api.event.player.UseEntityCallback;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluid;
@@ -24,6 +28,7 @@ import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.RaycastContext;
 import net.minecraft.world.RaycastContext.FluidHandling;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 
 public class InteractionManager {
     public static void register() {
@@ -31,10 +36,23 @@ public class InteractionManager {
         PlayerEvents.USE_BLOCK.register(InteractionManager::onUseBlock);
         PlayerEvents.USE_ITEM.register(InteractionManager::onUseItem);
         AttackEntityCallback.EVENT.register(InteractionManager::onAttackEntity);
+        UseEntityCallback.EVENT.register(InteractionManager::onUseEntity);
         PlayerEvents.IS_INVULNERABLE.register(InteractionManager::isInvulnerableTo);
     }
 
     private static ActionResult onUseBlock(PlayerEntity player, World world, Hand hand, BlockHitResult hitResult) {
+        BlockEntity blockEntity = world.getBlockEntity(hitResult.getBlockPos());
+
+        if (blockEntity != null) {
+            BlockEntityType blockType = blockEntity.getType();
+
+            if (blockEntity != null &&
+                    (blockType == BlockEntityType.ENDER_CHEST || blockType == BlockEntityType.ENCHANTING_TABLE
+                    || blockType == BlockEntityType.BELL || blockType == BlockEntityType.JIGSAW)) {
+                return ActionResult.PASS;
+            }
+        }
+
         if (checkPermissions(player, player.getBlockPos(), world) == ActionResult.FAIL) {
             return ActionResult.FAIL;
         }
@@ -98,6 +116,10 @@ public class InteractionManager {
         }
 
         return ActionResult.PASS;
+    }
+
+    private static ActionResult onUseEntity(PlayerEntity player, World world, Hand hand, Entity entity, @Nullable EntityHitResult entityHitResult) {
+        return checkPermissions(player, entity.getBlockPos(), world);
     }
 
     private static ActionResult isInvulnerableTo(Entity source, Entity target) {
