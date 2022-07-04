@@ -18,6 +18,7 @@ import net.minecraft.server.PlayerManager;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
+import net.minecraft.util.Formatting;
 
 public class FactionsManager {
     public static PlayerManager playerManager;
@@ -35,6 +36,9 @@ public class FactionsManager {
     private static void serverStarted(MinecraftServer server) {
         playerManager = server.getPlayerManager();
         Message.manager = server.getPlayerManager();
+
+        Faction warzone = new Faction("Warzone", "Wild Majors appear here", "This means war.", Formatting.RED, false, 100000);
+        Faction.add(warzone);
     }
 
     private static void factionModified(Faction faction) {

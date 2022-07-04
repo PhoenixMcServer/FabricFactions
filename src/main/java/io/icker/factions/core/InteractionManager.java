@@ -160,6 +160,10 @@ public class InteractionManager {
 
         Faction claimFaction = claim.getFaction();
 
+        if (claimFaction.getName() == "Warzone") {
+            return ActionResult.PASS;
+        }
+
         if (claimFaction.getClaims().size() * FactionsMod.CONFIG.CLAIM_WEIGHT > claimFaction.getPower()) {
             return ActionResult.PASS;
         }
