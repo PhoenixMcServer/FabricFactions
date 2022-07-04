@@ -64,6 +64,24 @@ public class SettingsCommand implements Command{
         return 1;
     }
 
+    private int legacyRadar(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
+        ServerCommandSource source = context.getSource();
+        ServerPlayerEntity player = source.getPlayer();
+
+        User user = User.get(player.getUuid());
+        user.legacyRadar = !user.legacyRadar;
+
+        new Message("Successfully toggled claim radar")
+            .filler("·")
+            .add(
+                new Message(user.legacyRadar ? "ON" : "OFF")
+                    .format(user.legacyRadar ? Formatting.GREEN : Formatting.RED)
+            )
+            .send(player, false);
+
+        return 1;
+    }
+
     public LiteralCommandNode<ServerCommandSource> getNode() {
         return CommandManager
             .literal("settings")
@@ -79,6 +97,11 @@ public class SettingsCommand implements Command{
                 CommandManager.literal("radar")
                 .requires(Requires.hasPerms("factions.settings.radar", 0))
                 .executes(this::radar)
+            )
+            .then(
+                CommandManager.literal("legacyRadar")
+                .requires(Requires.hasPerms("factions.settings.radar", 0))
+                .executes(this::legacyRadar)
             )
             .then(
                 CommandManager.literal("sounds")

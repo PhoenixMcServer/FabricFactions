@@ -47,6 +47,9 @@ public class User {
     @Field("Radar")
     public boolean radar = true;
 
+    @Field("Radar")
+    public boolean legacyRadar = false;
+
     @Field("Chat")
     public ChatMode chat = ChatMode.GLOBAL;
 

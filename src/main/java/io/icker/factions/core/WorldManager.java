@@ -68,6 +68,16 @@ public class WorldManager {
 
             world.getServer().getCommandManager().execute(world.getServer().getCommandSource().withSilent(), "title " + player.getCommandSource().getName() + " subtitle \"" + subtitle + "\"");
             world.getServer().getCommandManager().execute(world.getServer().getCommandSource().withSilent(), "title " + player.getCommandSource().getName() + " title {\"text\":\"" + factionName + "\",\"color\":\"" + color.asString() + "\"}");
+        } else if (FactionsMod.CONFIG.RADAR && user.legacyRadar) {
+            if (claim != null) {
+                new Message(claim.getFaction().getName())
+                    .format(claim.getFaction().getColor())
+                    .send(player, true);
+            } else {
+                new Message("Wilderness")
+                    .format(Formatting.GREEN)
+                    .send(player, true);
+            }
         }
     }
 }
