@@ -37,7 +37,11 @@ public class FactionsManager {
         playerManager = server.getPlayerManager();
         Message.manager = server.getPlayerManager();
 
-        Faction warzone = new Faction("Warzone", "Wild Majors appear here", "This means war.", Formatting.RED, false, 100000);
+        if (Faction.getByName("Warzone") != null) {
+            return;
+        }
+
+        Faction warzone = new Faction("Warzone", "Everyone for themselves", "This means war.", Formatting.RED, false, 100000);
         Faction.add(warzone);
     }
 

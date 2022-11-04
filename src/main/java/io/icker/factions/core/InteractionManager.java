@@ -156,11 +156,14 @@ public class InteractionManager {
         ChunkPos chunkPosition = world.getChunk(position).getPos();
 
         Claim claim = Claim.get(chunkPosition.x, chunkPosition.z, dimension);
-        if (claim == null) return ActionResult.PASS;
+        if (claim == null)
+        {
+            return ActionResult.PASS;
+        }
 
         Faction claimFaction = claim.getFaction();
 
-        if (claimFaction.getName() == "Warzone") {
+        if (claimFaction.getName().equals("Warzone")) {
             return ActionResult.PASS;
         }
 
@@ -174,12 +177,12 @@ public class InteractionManager {
 
         Faction userFaction = user.getFaction();
 
-        if (claimFaction == userFaction) {
+        if (claimFaction.getID() == userFaction.getID()) {
             return ActionResult.PASS;
         }
 
         if (claimFaction.isMutualAllies(userFaction.getID())) {
-            return ActionResult.SUCCESS;
+            return ActionResult.PASS;
         }
 
         return ActionResult.FAIL;
